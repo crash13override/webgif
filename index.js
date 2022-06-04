@@ -54,7 +54,16 @@ const argv = require('yargs')
   }
 
   await delay(argv.delay).then(()=> {
-    runGifExport(screenshotPromises);
+    (async () => {
+      await Promise.all(screenshotPromises);
+      console.log(`\nEncoding GIF: ${argv.output}`);
+      const encoder = new GIFEncoder(screenSize, screenSize);
+      await pngFileStream(`${workdir}/T*png`)
+          .pipe(encoder.createWriteStream({ repeat: 0, delay: argv.frames, quality: argv.quality }))
+          .pipe(fs.createWriteStream(`${argv.output}`));
+      await page.close();
+      await browser.close();
+    })
   });
 
 })();
@@ -65,17 +74,4 @@ process.on('unhandledRejection', function(reason, p) {
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-
-async function runGifExport(screenshotPromises){
-
-  await Promise.all(screenshotPromises);
-  console.log(`\nEncoding GIF: ${argv.output}`);
-  const encoder = new GIFEncoder(screenSize, screenSize);
-  await pngFileStream(`${workdir}/T*png`)
-      .pipe(encoder.createWriteStream({ repeat: 0, delay: argv.frames, quality: argv.quality }))
-      .pipe(fs.createWriteStream(`${argv.output}`));
-  await page.close();
-  await browser.close();
 }
