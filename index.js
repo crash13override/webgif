@@ -13,7 +13,13 @@ const argv = require('yargs')
   .alias('url', 'u').default('url', 'https://giphy.com/search/lol')
   .describe('url', 'URL to generate GIF from')
   .alias('duration', 'd').default('duration', 10)
-  .describe('duration', 'GIF duration in seconds')
+  .describe('duration', 'GIF duration in frames')
+    .alias('delay', 'l').default('delay', 2000)
+    .describe('delay', 'Initial delay in milliseconds')
+    .alias('frames', 'f').default('frames', 2000)
+    .describe('frames', 'Frames duration in milliseconds')
+    .alias('quality', 'q').default('quality', 25)
+    .describe('quality', 'Image quality')
   .alias('output', 'o').default('output', `${process.cwd()}${require('path').sep}web.gif`)
   .describe('output', 'Output file name')
   .alias('h', 'help')
@@ -44,15 +50,15 @@ const argv = require('yargs')
     filename = `${workdir}/T${new Date().getTime()}.png`;
     process.stdout.write('.');
     screenshotPromises.push(page.screenshot({ path: filename, }));
-    await delay(150);
+    await delay(argv.frames);
   }
 
-  await delay(2500);
+  await delay(argv.delay);
   await Promise.all(screenshotPromises);
   console.log(`\nEncoding GIF: ${argv.output}`);
   const encoder = new GIFEncoder(screenSize, screenSize);
   await pngFileStream(`${workdir}/T*png`)
-    .pipe(encoder.createWriteStream({ repeat: 0, delay: 150, quality: 25 }))
+    .pipe(encoder.createWriteStream({ repeat: 0, delay: argv.frames, quality: argv.quality }))
     .pipe(fs.createWriteStream(`${argv.output}`));
   await page.close();
   await browser.close();
