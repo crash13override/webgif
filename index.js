@@ -44,7 +44,7 @@ const argv = require('yargs')
     filename = `${workdir}/T${new Date().getTime()}.png`;
     process.stdout.write('.');
     screenshotPromises.push(page.screenshot({ path: filename, }));
-    await delay(200);
+    await delay(150);
   }
 
   await delay(2500);
@@ -52,7 +52,7 @@ const argv = require('yargs')
   console.log(`\nEncoding GIF: ${argv.output}`);
   const encoder = new GIFEncoder(screenSize, screenSize);
   await pngFileStream(`${workdir}/T*png`)
-    .pipe(encoder.createWriteStream({ repeat: 0, delay: 200, quality: 25 }))
+    .pipe(encoder.createWriteStream({ repeat: 0, delay: 150, quality: 25 }))
     .pipe(fs.createWriteStream(`${argv.output}`));
   await page.close();
   await browser.close();
