@@ -44,15 +44,15 @@ const argv = require('yargs')
     filename = `${workdir}/T${new Date().getTime()}.png`;
     process.stdout.write('.');
     screenshotPromises.push(page.screenshot({ path: filename, }));
-    await delay(100);
+    await delay(200);
   }
 
-  await delay(2000);
+  await delay(2500);
   await Promise.all(screenshotPromises);
   console.log(`\nEncoding GIF: ${argv.output}`);
   const encoder = new GIFEncoder(screenSize, screenSize);
   await pngFileStream(`${workdir}/T*png`)
-    .pipe(encoder.createWriteStream({ repeat: 0, delay: 100, quality: 30 }))
+    .pipe(encoder.createWriteStream({ repeat: 0, delay: 200, quality: 25 }))
     .pipe(fs.createWriteStream(`${argv.output}`));
   await page.close();
   await browser.close();
