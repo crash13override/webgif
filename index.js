@@ -7,6 +7,8 @@ const pngFileStream = require('png-file-stream');
 const puppeteer = require('puppeteer');
 const tempdir = require('tempdir');
 
+const screenSize = 480;
+
 const argv = require('yargs')
   .alias('url', 'u').default('url', 'https://giphy.com/search/lol')
   .describe('url', 'URL to generate GIF from')
@@ -29,8 +31,8 @@ const argv = require('yargs')
   const workdir = await tempdir();
 
   page.setViewport({
-    width: 1024,
-    height: 768,
+    width: screenSize,
+    height: screenSize,
   });
 
   console.log(`Navigating to URL: ${argv.url}`);
@@ -42,15 +44,15 @@ const argv = require('yargs')
     filename = `${workdir}/T${new Date().getTime()}.png`;
     process.stdout.write('.');
     screenshotPromises.push(page.screenshot({ path: filename, }));
-    await delay(1000);
+    await delay(100);
   }
 
-  await delay(1000);
+  await delay(2000);
   await Promise.all(screenshotPromises);
   console.log(`\nEncoding GIF: ${argv.output}`);
-  const encoder = new GIFEncoder(1024, 768);
+  const encoder = new GIFEncoder(screenSize, screenSize);
   await pngFileStream(`${workdir}/T*png`)
-    .pipe(encoder.createWriteStream({ repeat: 0, delay: 200, quality: 20 }))
+    .pipe(encoder.createWriteStream({ repeat: 0, delay: 200, quality: 30 }))
     .pipe(fs.createWriteStream(`${argv.output}`));
   await page.close();
   await browser.close();
