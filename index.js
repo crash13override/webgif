@@ -54,7 +54,7 @@ const argv = require('yargs')
   }
 
   await delay(argv.delay).then(()=> {
-    runGifExport();
+    runGifExport(screenshotPromises);
   });
 
 })();
@@ -68,7 +68,7 @@ function delay(ms) {
 }
 
 
-async function runGifExport(){
+async function runGifExport(screenshotPromises){
 
   await Promise.all(screenshotPromises);
   console.log(`\nEncoding GIF: ${argv.output}`);
