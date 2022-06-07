@@ -22,9 +22,11 @@ const argv = require('yargs')
     .describe('quality', 'Image quality')
   .alias('output', 'o').default('output', `${process.cwd()}${require('path').sep}web.gif`)
   .describe('output', 'Output file name')
+    .alias('type', 't').default('type', 'gif')
+    .describe('type', 'Image output format (gif/png)')
   .alias('h', 'help')
   .alias('V', 'version')
-  .usage('webgif -u URL -d DURATION [-o OUTFILE]')
+  .usage('webgif -u URL -d DURATION [-o OUTFILE] [-l DELAY] [-f FRAMES] [-q QUALITY] [-t TYPE]')
   .version()
   .argv;
 
@@ -47,7 +49,7 @@ const argv = require('yargs')
   process.stdout.write('Taking screenshots: .');
   const screenshotPromises = [];
   for (let i = 1; i <= argv.duration; ++i) {
-    filename = `${workdir}/T${new Date().getTime()}.png`;
+    filename = (argv.type == 'png') ? `${workdir}/${argv.output}` : `${workdir}/T${new Date().getTime()}.png`;
     process.stdout.write('.');
     screenshotPromises.push(page.screenshot({ path: filename, }));
     await delay(argv.frames);
@@ -55,11 +57,13 @@ const argv = require('yargs')
 
   await delay(argv.delay);
   await Promise.all(screenshotPromises);
-  console.log(`\nEncoding GIF: ${argv.output}`);
-  const encoder = new GIFEncoder(screenSize, screenSize);
-  await pngFileStream(`${workdir}/T*png`)
-      .pipe(encoder.createWriteStream({ repeat: 0, delay: argv.frames, quality: argv.quality }))
-      .pipe(fs.createWriteStream(`${argv.output}`));
+  if(argv.type == 'gif'){
+    console.log(`\nEncoding GIF: ${argv.output}`);
+    const encoder = new GIFEncoder(screenSize, screenSize);
+    await pngFileStream(`${workdir}/T*png`)
+        .pipe(encoder.createWriteStream({ repeat: 0, delay: argv.frames, quality: argv.quality }))
+        .pipe(fs.createWriteStream(`${argv.output}`));
+  }
   await page.close();
   await browser.close();
 
