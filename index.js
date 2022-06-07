@@ -51,7 +51,10 @@ const argv = require('yargs')
   for (let i = 1; i <= argv.duration; ++i) {
     filename = (argv.type == 'png') ? `${argv.output}` : `${workdir}/T${new Date().getTime()}.png`;
     process.stdout.write('.');
-    screenshotPromises.push(page.screenshot({ path: filename, }));
+    screenshotPromises.push(page.screenshot({
+      path: filename,
+      omitBackground: true,
+    }));
     await delay(argv.frames);
   }
 
