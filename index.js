@@ -71,7 +71,7 @@ const argv = require('yargs')
     const encoder = new GIFEncoder(screenSize, screenSize);
     await pngFileStream(`temp/${argv.output}/T*png`)
         .pipe(encoder.createWriteStream({ repeat: 0, delay: argv.frames, quality: argv.quality }))
-        .pipe(fs.createWriteStream(`${argv.output}`));
+        .pipe(fs.createWriteStream(`${argv.output}.gif`));
   }
   await page.close();
   await browser.close();
