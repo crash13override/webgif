@@ -49,7 +49,6 @@ const argv = require('yargs')
   process.stdout.write('Taking screenshots: .');
   const screenshotPromises = [];
   for (let i = 1; i <= argv.duration; ++i) {
-    let curSuffix = (i == 1) ? '' : '-' + i;
     filename = (argv.type == 'png') ? `${argv.output}/${argv.output}-${i}.png` : `${workdir}/T${new Date().getTime()}.png`;
     process.stdout.write('.');
     screenshotPromises.push(page.screenshot({
@@ -58,7 +57,7 @@ const argv = require('yargs')
     }));
     if(i == argv.duration - 1) {
       screenshotPromises.push(page.screenshot({
-        path: `${argv.output}${curSuffix}.png`,
+        path: `${argv.output}.png`,
         omitBackground: true,
       }));
     }
