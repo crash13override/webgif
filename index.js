@@ -55,7 +55,7 @@ const argv = require('yargs')
       path: filename,
       omitBackground: true,
     }));
-    if(i == argv.duration - 1) {
+    if((argv.type == 'png') && i == argv.duration - 1) {
       screenshotPromises.push(page.screenshot({
         path: `${argv.output}.png`,
         omitBackground: true,
