@@ -49,7 +49,7 @@ const argv = require('yargs')
   process.stdout.write('Taking screenshots: .');
   const screenshotPromises = [];
   for (let i = 1; i <= argv.duration; ++i) {
-    filename = (argv.type == 'png') ? `${argv.output}/${i}.png` : `${workdir}/T${new Date().getTime()}.png`;
+    filename = (argv.type == 'png') ? `${argv.output}/${i}.png` : `temp/T${new Date().getTime()}.png`;
     process.stdout.write('.');
     screenshotPromises.push(page.screenshot({
       path: filename,
@@ -69,7 +69,7 @@ const argv = require('yargs')
   if(argv.type == 'gif'){
     console.log(`\nEncoding GIF: ${argv.output}`);
     const encoder = new GIFEncoder(screenSize, screenSize);
-    await pngFileStream(`${workdir}/T*png`)
+    await pngFileStream(`temp/T*png`)
         .pipe(encoder.createWriteStream({ repeat: 0, delay: argv.frames, quality: argv.quality }))
         .pipe(fs.createWriteStream(`${argv.output}`));
   }
